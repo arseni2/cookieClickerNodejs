@@ -83,7 +83,7 @@ export class UserService {
             return new HttpException("в prod версии проекта акк будет забанен", HttpStatus.CONFLICT)
         }
         user.cookie += setCookieDTO.cookie
-        user.currentEnergy -= setCookieDTO.currentEnergy
+        user.currentEnergy -= setCookieDTO.cookie
         return this.userRepo.save(user)
     }
 
