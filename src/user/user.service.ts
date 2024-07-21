@@ -18,7 +18,7 @@ export class UserService {
     ) {
     }
 
-    async create(createUserDto: CreateUserDto) {
+    async create(createUserDto: CreateUserDto, tgId: string) {
         let referrer: UserEntity = null;
 
         if (createUserDto.refId) {
@@ -31,7 +31,7 @@ export class UserService {
             }
         }
 
-        const newUser = this.userRepo.create(createUserDto);
+        const newUser = this.userRepo.create({...createUserDto, tgId});
 
         if (referrer) {
             newUser.referrer = referrer;

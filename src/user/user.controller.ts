@@ -15,8 +15,8 @@ export class UserController {
     }
 
     @Post('create')
-    create(@Body() createUserDto: CreateUserDto) {
-        return this.userService.create(createUserDto);
+    create(@Body() createUserDto: CreateUserDto, @Req() req: RequestWithUserTgId) {
+        return this.userService.create(createUserDto, req.userTgId);
     }
 
     @Get('profile')
