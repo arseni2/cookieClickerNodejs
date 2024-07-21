@@ -57,4 +57,7 @@ export class UserEntity {
     @ManyToMany(() => CardEntity, {onDelete: "SET NULL"})
     @JoinTable()
     cards: CardEntity[]
+
+    @Column({ default: Date.now(), type: "bigint" })
+    lastVisit: number;
 }

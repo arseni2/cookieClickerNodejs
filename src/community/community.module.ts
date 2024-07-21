@@ -7,6 +7,8 @@ import {UserEntity} from "../user/entities/user.entity";
 import {FileModule} from "../file/file.module";
 import {MulterModule} from "@nestjs/platform-express";
 import {fileStorage} from "../file/storage";
+import {UserModule} from "../user/user.module";
+import {UserService} from "../user/user.service";
 
 @Module({
 	controllers: [CommunityController],
@@ -18,6 +20,7 @@ import {fileStorage} from "../file/storage";
 			dest: './upload',
 			storage: fileStorage
 		}),
+		UserModule
 	]
 })
 export class CommunityModule {

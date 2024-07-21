@@ -22,18 +22,18 @@ export class CommunityService {
 	) {
 	}
 
-	async create(createCommunityDto: CreateCommunityDto) {
+	async create(createCommunityDto: CreateCommunityDto, tgId: string) {
 		console.log(createCommunityDto)
 		if(createCommunityDto.image) {
 			var file = await this.fileService.saveFile(createCommunityDto.image)
 		}
 		try {
 			const community = await this.communityRepo.save({
-				author: {id: createCommunityDto.authorId},
+				author: {tgId},
 				title: createCommunityDto.title,
 				image: file
 			})
-			await this.userRepo.update(createCommunityDto.authorId, {
+			await this.userRepo.update({tgId}, {
 				myCommunity: community
 			});
 
@@ -47,14 +47,14 @@ export class CommunityService {
 
 	}
 
-	async join(joinCommunityDto: JoinCommunityDto) {
+	async join(joinCommunityDto: JoinCommunityDto, tgId: string) {
 		let community = await this.communityRepo.findOne({
 			where: {id: joinCommunityDto.communityId},
 			relations: ["members"]
 		})
 
 		// @ts-ignore
-		community.members.push({id: joinCommunityDto.userId})
+		community.members.push({tgId})
 
 		return this.communityRepo.save(community)
 	}
@@ -67,15 +67,14 @@ export class CommunityService {
 		return `This action returns a #${id} community`;
 	}
 
-	async update(id: number, updateCommunityDto: UpdateCommunityDto) {
+	async update(id: number, updateCommunityDto: UpdateCommunityDto, tgId: string) {
 		const community = await this.communityRepo.findOne({where: {id}, relations: ["author"]})
-		const {userTgId, ...otherDataDto} = updateCommunityDto
-		if(community.author.tgId !== userTgId) return new HttpException("Вы не являетесь автором community", HttpStatus.FORBIDDEN)
+		if(community.author.tgId !== tgId) return new HttpException("Вы не являетесь автором community", HttpStatus.FORBIDDEN)
 
-		return this.communityRepo.update(community, otherDataDto)
+		return this.communityRepo.update(community, updateCommunityDto)
 	}
 
-	async remove(deleteCommunityDto: DeleteCommunityDto) {
+	async remove(deleteCommunityDto: DeleteCommunityDto, tgId: string) {
         const community = await this.communityRepo.findOne({
 		    where: {id: deleteCommunityDto.communityId},
 			relations: ["author"]
@@ -83,7 +82,7 @@ export class CommunityService {
 
 		if(!community) return new HttpException("Не коректный id community", HttpStatus.BAD_REQUEST)
 
-		if(community.author.tgId !== deleteCommunityDto.userTgId) return new HttpException("Вы не являетесь автором community", HttpStatus.FORBIDDEN)
+		if(community.author.tgId !== tgId) return new HttpException("Вы не являетесь автором community", HttpStatus.FORBIDDEN)
 		
 		community.author.myCommunity = null;
 		await this.userRepo.save(community.author);

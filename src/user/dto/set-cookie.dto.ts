@@ -5,5 +5,5 @@ export class SetCookieDto {
 	cookie: number
 
 	@ApiProperty()
-	userTgId: number
+	currentEnergy: number
 }

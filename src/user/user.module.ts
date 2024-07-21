@@ -9,5 +9,6 @@ import {CardModule} from "../card/card.module";
   controllers: [UserController],
   providers: [UserService],
   imports: [TypeOrmModule.forFeature([UserEntity]), CardModule],
+  exports: [UserService]
 })
 export class UserModule {}
