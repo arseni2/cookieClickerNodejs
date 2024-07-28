@@ -11,7 +11,9 @@ import {SetCookieDto} from "./dto/set-cookie.dto";
 @Controller('user')
 @ApiTags("Пользователи")
 export class UserController {
-    constructor(private readonly userService: UserService) {
+    constructor(
+        private readonly userService: UserService
+    ) {
     }
 
     @Post('create')
@@ -21,25 +23,29 @@ export class UserController {
 
     @Get('profile')
     findOneById(@Req() req: RequestWithUserTgId) {
-        return this.userService.findOneByTgId(req.userTgId);
+        return this.userService.profile(req.userTgId);
     }
 
     @Post("setCookie")
     setCookie(@Req() req: RequestWithUserTgId, @Body() setCookieDto: SetCookieDto) {
         return this.userService.setCookie(setCookieDto, req.userTgId);
     }
-    // @Patch(':id')
-    // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    //     return this.userService.update(+id, updateUserDto);
-    // }
 
-    // @Delete(':id')
-    // remove(@Param('id') id: string) {
-    //     return this.userService.remove(+id);
-    // }
     @UseInterceptors(UpdateLastVisitInterceptor)
     @Post('buyCard')
     buyCard(@Body() buyCardDto: BuyCardDto, @Req() req: RequestWithUserTgId) {
         return this.userService.buyCard(buyCardDto, req.userTgId);
+    }
+
+    @UseInterceptors(UpdateLastVisitInterceptor)
+    @Post("updateMaxEnergy")
+    updateMaxEnergy(@Req() req: RequestWithUserTgId) {
+        return this.userService.incrementMaxEnergyLimit(req.userTgId)
+    }
+
+    @UseInterceptors(UpdateLastVisitInterceptor)
+    @Post("updateTap")
+    updateTap(@Req() req: RequestWithUserTgId) {
+        return this.userService.incrementTap(req.userTgId)
     }
 }

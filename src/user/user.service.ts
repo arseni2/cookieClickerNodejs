@@ -10,6 +10,9 @@ import {SetCookieDto} from "./dto/set-cookie.dto";
 
 @Injectable()
 export class UserService {
+    //TODO:
+    //1) написать инкрементация тапа
+    //2) доделать таски
     constructor(
         @InjectRepository(UserEntity)
         private userRepo: Repository<UserEntity>,
@@ -37,13 +40,17 @@ export class UserService {
             newUser.referrer = referrer;
         }
 
-        await this.userRepo.save(newUser);
+        await this.userRepo.save(newUser, {transaction: false});
 
         return newUser;
     }
 
     async findOneByTgId(tgId: string) {
-        let user = await this.userRepo.findOne({where: {tgId}});
+        return this.userRepo.findOne({where: {tgId}, transaction: false});
+    }
+
+    async profile(tgId: string) {
+        const user = await this.findOneByTgId(tgId)
         const seconds = Math.ceil((Date.now() - user.lastVisit) / 1000)
         const energyRecovery = seconds*2
         user.currentEnergy += energyRecovery
@@ -89,5 +96,31 @@ export class UserService {
 
     async updateLastVisit(tgId: string) {
         return this.userRepo.update({tgId}, {lastVisit: Date.now()})
+    }
+
+    async save(user: UserEntity) {
+        return this.userRepo.save(user)
+    }
+
+    async incrementMaxEnergyLimit(tgId: string) {
+        const user = await this.findOneByTgId(tgId)
+
+        if(user.cookie < 500 * user.maxEnergyLevel) return new HttpException("не хватает денег", HttpStatus.FORBIDDEN)
+
+        user.cookie -= 500 * user.maxEnergyLevel
+        user.maxEnergy += 500
+
+        return this.save(user)
+    }
+
+    async incrementTap(tgId: string) {
+        const user = await this.findOneByTgId(tgId)
+
+        if(user.cookie < 500 * user.tap) return new HttpException("не хватает денег", HttpStatus.FORBIDDEN)
+        
+        user.cookie -= 500 * user.tap
+        user.tap += 1
+
+        return this.save(user)
     }
 }

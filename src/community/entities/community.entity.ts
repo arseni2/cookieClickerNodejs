@@ -2,7 +2,7 @@ import {Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn}
 import {UserEntity} from "../../user/entities/user.entity";
 import {FileEntity} from "../../file/file.entity";
 
-@Entity()
+@Entity("Community")
 export class CommunityEntity {
     @PrimaryGeneratedColumn()
     id: number;

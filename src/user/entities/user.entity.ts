@@ -10,7 +10,7 @@ export enum rankEnum {
     diamond='diamond',
     emerald='emerald'
 }
-@Entity()
+@Entity("User")
 export class UserEntity {
     @PrimaryGeneratedColumn()
     id: number;
@@ -36,6 +36,9 @@ export class UserEntity {
     @Column({default: 1500})
     maxEnergy: number;
 
+    @Column({default: 1})
+    maxEnergyLevel: number;
+
     @Column({default: 1500})
     currentEnergy: number;
     //можно держать в бд время последнего посещения и когда юзер снова заходит то высчитывать сколько времени его не было в секундах
@@ -60,4 +63,6 @@ export class UserEntity {
 
     @Column({ default: Date.now(), type: "bigint" })
     lastVisit: number;
+
+
 }

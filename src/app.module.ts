@@ -7,6 +7,7 @@ import {CommunityModule} from './community/community.module';
 import {FileModule} from './file/file.module';
 import {CardModule} from './card/card.module';
 import {AuthUserMiddleware} from "./user/middleware/auth-user/auth-user.middleware";
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import {AuthUserMiddleware} from "./user/middleware/auth-user/auth-user.middlewa
     CommunityModule,
     FileModule,
     CardModule,
+    TaskModule,
   ],
   controllers: [AppController],
   providers: [AppService],
